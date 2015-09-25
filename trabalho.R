@@ -16,17 +16,13 @@ cpa_data <- read.csv(connection, header = FALSE, sep = ";", stringsAsFactors = F
 cpa_data[[1]] <- strptime(cpa_data[[1]], "%d/%m/%Y")
 
 cpa_data <- data.frame(Horario=cpa_data[1], Temperatura=cpa_data[2])
-#colnames(cpa_data) <- c("Horario", "Temperatura")
 
-#TODO Tenho que pensar em como definir a estrutura de dados 
-serie <- list(day = "", temps = c())
+# Parse the dataframe to a data structure where the date is the index
+# of the vector with the measures.
+time_series <- list()
+measured_dates <- unique(cpa_data[[1]])
 
-#FIXME aqui so estou pegando as primeiras 100 linhas pra testar
-for(i in 1:100) {
-
-  day <- as.character(cpa_data[i, ][[1]])
-  temp <- as.numeric(cpa_data[i, ][[2]])
-  
-
-  #serie[day] <- c(???, temp)
+for(i in 1:length(measured_dates)) {
+    time_series <- c(time_series, list(measured_dates[i]))
 }
+
