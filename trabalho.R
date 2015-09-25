@@ -29,18 +29,26 @@ for(i in 1:length(measured_dates)) {
 for(i in 1:nrow(cpa_data)) {
     day <- as.character(cpa_data[[1]][i])
     temp <- as.numeric(cpa_data[[2]][i])
-#    if(!is.numeric(temp)){
-#        cat("ERRO day ", day, " -> ", temp)
-#      
-#    }
+    #FIXME -> Temos que corrigir o NA no for abaixo... não aqui
+    # If temp is NA, get the last measure
+    if(is.na(temp)){
+        temp <- tail(time_series[[day]], n=1)
+    }
     time_series[[day]] <- c(time_series[[day]], temp)
 }
 
-#for(i in 1:length(time_series)) {
-#    soma <- sum(time_series[[time_series[[i]]]])
-#    #if(!is.numeric(soma)) {
-#        cat("day[", i, "] = ", time_series[[i]]," | sum = ", soma, "    ")
-#    #}
-#}
+for(i in 1:length(time_series)) {
+    # If soma == NA, there's a NA temp in this day
+    soma <- sum(time_series[[time_series[[i]]]])
+    if(is.na(soma)) {
+        num_nas = sum(is.na(time_series[[time_series[[i]]]]))
+        # If there's more then 10 NAs, we'll discard this serie
+        if(num_nas > 10){
+            time_series[[time_series[[i]]]] <- NULL
+        }
+        cat("day[", i, "] = ", time_series[[i]],"num_nas = ", num_nas, "\n")
+        cat("time_series:\n", time_series[[time_series[[i]]]], "\n\n")
+    }
+}
 
 
