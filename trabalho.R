@@ -29,7 +29,27 @@ cosine_sim <- function(serie1, serie2) {
   return(sim)
 }
 
+query_euclidian <- function(input_serie, set_of_series) {
+    query_result <- list()
+    set_series_size <- length(set_of_series)
 
+    for(i in 1:set_series_size) {
+        current_serie <- set_of_series[[set_of_series[[i]]]]
+        current_day <- sapply(set_of_series[i], function(x) {x[[1]]})
+        if(length(input_serie) != length(current_serie)) {
+          next # skip this iteration
+        }
+        else {
+          similarity <- euclidian_dist(input_serie, current_serie)
+          cat("Serie ", i, "\n", file = "console_output.txt", append = TRUE)
+          cat("Day = ", current_day, file = "console_output.txt", append = TRUE)
+          cat("\nSimilarity = ", similarity, "\n\n", file = "console_output.txt", append = TRUE)
+          query_result <- c(query_result, list(current_day, similarity))
+        }
+    }
+
+    return(query_result)
+}
 
 #
 # MAIN EXECUTION STARTS HERE
@@ -70,9 +90,9 @@ cat("Console Output", file = "console_output.txt")
 cat("\n\n", file = "console_output.txt", append = TRUE)
 
 for(i in 1:length(time_series)) {
-    # If soma == NA, there's a NA temp in this day
-    soma <- sum(time_series[[time_series[[i]]]])
-    if(is.na(soma)) {
+    # If total_sum == NA, there's a NA temp in this day
+    total_sum <- sum(time_series[[time_series[[i]]]])
+    if(is.na(total_sum)) {
         num_nas = sum(is.na(time_series[[time_series[[i]]]]))
         # If there's more then 10 NAs, we'll discard this serie
         if(num_nas > 10){
@@ -103,27 +123,22 @@ for(i in 1:length(time_series)) {
         time_series[[time_series[[i]]]] <- c(temp_aux, rep(last_temp, k))
     }
     # Print time series into log file
-    cat("day[", i, "]\n", "size = ", length(time_series[[time_series[[i]]]]), "\n",
-        time_series[[time_series[[i]]]], "\n\n", file = "console_output.txt", append = TRUE)
+    #cat("day[", i, "]\n", "size = ", length(time_series[[time_series[[i]]]]), "\n",
+    #    time_series[[time_series[[i]]]], "\n\n", file = "console_output.txt", append = TRUE)
 
 }
 
-# Process total data
-complete_days <- 0
-deleted_days <- 0
-mysize <- length(time_series)
-for(i in 1:mysize) {
-    size <- length(time_series[[time_series[[i]]]])
-    if(size == 144) {
-        complete_days <- complete_days + 1
-    }
-    else if(size == 0) {
-        deleted_days <- deleted_days + 1
-    }
-}
-cat("Series Size: ", mysize)
-cat("Valid Days: ", complete_days)
-cat("Deleted Days: ", deleted_days)
+# Write the output to text file
+file.remove("console_output.txt") # Delete previous console output if exists
+# Create a file in working directory to store console output
+cat("Console Output", file = "console_output.txt")
+cat("\n\n", file = "console_output.txt", append = TRUE)
+
+
+# Test the code
+my_test_input <- time_series[[time_series[[20]]]]
+my_euclidian_result <- query_euclidian(my_test_input, time_series)
+print(my_euclidian_result)
 
 
 cat("End of the code...")
