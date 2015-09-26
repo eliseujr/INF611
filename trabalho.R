@@ -5,6 +5,29 @@
 # Aluno: Marcos Aurelio Freitas de Almeida Costa
 #
 
+#
+# DEFINING FUNCTIONS
+#
+
+# Calculate the Euclidian distance between two series
+euclidian_dist <- function(serie1, serie2) {
+  # Checking if the two series have the same size/dimesion
+  if(length(serie1) != length(serie2)) return("ERROR")
+
+  somatory <- 0
+  for(i in 1:length(serie1)) {
+    somatory <- somatory + ((serie1[i] - serie2[i]) ^ 2)
+  }
+
+  return(sqrt(somatory))
+}
+
+
+
+#
+# MAIN EXECUTION STARTS HERE
+#
+
 # Read data from cepagri url
 connection <- url("http://www.ic.unicamp.br/~zanoni/cepagri/cepagri.csv")
 
