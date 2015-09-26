@@ -14,12 +14,19 @@ euclidian_dist <- function(serie1, serie2) {
   # Checking if the two series have the same size/dimesion
   if(length(serie1) != length(serie2)) return("ERROR")
 
-  somatory <- 0
-  for(i in 1:length(serie1)) {
-    somatory <- somatory + ((serie1[i] - serie2[i]) ^ 2)
-  }
+  dist <- sqrt(sum( (serie1-serie2)^2) )
 
-  return(sqrt(somatory))
+  return(dist)
+}
+
+# Calculate the Cosine similarity between two series
+cosine_sim <- function(serie1, serie2) {
+  # Checking if the two series have the same size/dimesion
+  if(length(serie1) != length(serie2)) return("ERROR")
+
+  sim <- sum(serie1*serie2) / (sqrt(sum(serie1*serie1)) *  sqrt(sum(serie2*serie2)))
+
+  return(sim)
 }
 
 
