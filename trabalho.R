@@ -32,6 +32,9 @@ for(i in 1:nrow(cpa_data)) {
     time_series[[day]] <- c(time_series[[day]], temp)
 }
 
+# Delete previous console output if exists
+file.remove("console_output.txt")
+
 # Create a file in working directory to store console output
 cat("Console Output", file = "console_output.txt")
 cat("\n\n", file = "console_output.txt", append = TRUE)
@@ -54,19 +57,43 @@ for(i in 1:length(time_series)) {
             }
             time_series[[time_series[[i]]]] <- temp_aux
         }
-        cat("day[", i, "] = ", time_series[[i]],"num_nas = ", num_nas, "\n",
-            file = "console_output.txt", append = TRUE)
-        cat("time_series:\n", time_series[[time_series[[i]]]], "\n\n",
-            file = "console_output.txt", append = TRUE)
     }
+
+    # Delete the days where the number of measures are less than 130.
+    # Complete the days that have missing measures.
+    n_measures <- length(time_series[[time_series[[i]]]])
+    if(n_measures < 130) {
+        time_series[[time_series[[i]]]] <- NULL
+    }
+    else if((n_measures >= 130) && (n_measures < 144)) {
+        temp_aux <- time_series[[time_series[[i]]]]
+        k <- 144 - length(temp_aux) # Get number of missing values
+        last_temp <- tail(temp_aux, n=1) # Get last element of the series
+        # Use the last element of the series to complete it.
+        time_series[[time_series[[i]]]] <- c(temp_aux, rep(last_temp, k))
+    }
+    # Print time series into log file
+    cat("day[", i, "]\n", "size = ", length(time_series[[time_series[[i]]]]), "\n",
+        time_series[[time_series[[i]]]], "\n\n", file = "console_output.txt", append = TRUE)
+
 }
 
-# Get the number of measures there are in each day
-mycount <- 0
+# Process total data
+complete_days <- 0
+deleted_days <- 0
 mysize <- length(time_series)
 for(i in 1:mysize) {
     size <- length(time_series[[time_series[[i]]]])
-    cat("Day ", i, " = ", size, "\n", file = "console_output.txt", append = TRUE)
+    if(size == 144) {
+        complete_days <- complete_days + 1
+    }
+    else if(size == 0) {
+        deleted_days <- deleted_days + 1
+    }
 }
+cat("Series Size: ", mysize)
+cat("Valid Days: ", complete_days)
+cat("Deleted Days: ", deleted_days)
+
 
 cat("End of the code...")
