@@ -29,11 +29,6 @@ for(i in 1:length(measured_dates)) {
 for(i in 1:nrow(cpa_data)) {
     day <- as.character(cpa_data[[1]][i])
     temp <- as.numeric(cpa_data[[2]][i])
-    #FIXME -> Temos que corrigir o NA no for abaixo... não aqui
-    # If temp is NA, get the last measure
-    if(is.na(temp)){
-        temp <- tail(time_series[[day]], n=1)
-    }
     time_series[[day]] <- c(time_series[[day]], temp)
 }
 
@@ -46,9 +41,18 @@ for(i in 1:length(time_series)) {
         if(num_nas > 10){
             time_series[[time_series[[i]]]] <- NULL
         }
+        else {
+            temp_aux <- time_series[[time_series[[i]]]]
+            for(j in 1:length(temp_aux)) {
+              if(is.na(temp_aux[j])){
+                  temp_aux[j] <- temp_aux[j-1]
+              }
+            }
+            time_series[[time_series[[i]]]] <- temp_aux
+        }
         cat("day[", i, "] = ", time_series[[i]],"num_nas = ", num_nas, "\n")
         cat("time_series:\n", time_series[[time_series[[i]]]], "\n\n")
     }
 }
 
-
+cat("End of the code...")
