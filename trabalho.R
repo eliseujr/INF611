@@ -32,6 +32,10 @@ for(i in 1:nrow(cpa_data)) {
     time_series[[day]] <- c(time_series[[day]], temp)
 }
 
+# Create a file in working directory to store console output
+cat("Console Output", file = "console_output.txt")
+cat("\n\n", file = "console_output.txt", append = TRUE)
+
 for(i in 1:length(time_series)) {
     # If soma == NA, there's a NA temp in this day
     soma <- sum(time_series[[time_series[[i]]]])
@@ -50,9 +54,19 @@ for(i in 1:length(time_series)) {
             }
             time_series[[time_series[[i]]]] <- temp_aux
         }
-        cat("day[", i, "] = ", time_series[[i]],"num_nas = ", num_nas, "\n")
-        cat("time_series:\n", time_series[[time_series[[i]]]], "\n\n")
+        cat("day[", i, "] = ", time_series[[i]],"num_nas = ", num_nas, "\n",
+            file = "console_output.txt", append = TRUE)
+        cat("time_series:\n", time_series[[time_series[[i]]]], "\n\n",
+            file = "console_output.txt", append = TRUE)
     }
+}
+
+# Get the number of measures there are in each day
+mycount <- 0
+mysize <- length(time_series)
+for(i in 1:mysize) {
+    size <- length(time_series[[time_series[[i]]]])
+    cat("Day ", i, " = ", size, "\n", file = "console_output.txt", append = TRUE)
 }
 
 cat("End of the code...")
