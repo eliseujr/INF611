@@ -12,8 +12,6 @@
 # Constants
 EUCLIDEAN_FUNCTION <- "EUCLIDEAN"
 COSINE_FUNCTION <- "COSINE"
-
-# Debugging flag
 DEBUG <- FALSE
 
 # Calculate the Euclidian distance between two series
@@ -78,17 +76,19 @@ sort_query_result <- function(query_to_sort, distance_function = EUCLIDEAN_FUNCT
   }
 }
 
-#TODO need to ordenate the distances list now to be able to calculate the precision
 # Return P@30  precision
-p30_precision <- function(distance_list) {
-  precision <- 0
-  distances <- c()
+p30_precision <- function(input_date, ordered_distance_list) {
+  same_month <- 0
+  input_month <- substring(input_date, 1, 7)
   
-  for(i in 1:length(distance_list)) {
-    distances <- c(distances, distance_list[[i]])
+  for(i in 1:30) {
+    month <- substring(ordered_distance_list[i], 1, 7)
+    if(month == input_month) same_month <- same_month + 1
   }
   
-  return(cat("P@30 precision is ", precision, "\n"))
+  precision <- signif((same_month / 30)*100, 4)
+  
+  return(cat("P@30 precision for day", input_date,"is", precision, "%\n"))
 }
 
 #
@@ -177,10 +177,15 @@ if(DEBUG) cat("Console Output", file = "console_output.txt")
 if(DEBUG) cat("\n\n", file = "console_output.txt", append = TRUE)
 
 
-# Test the code
-my_test_input <- time_series[[time_series[[20]]]]
-my_euclidian_distances <- calculate_distances(my_test_input, time_series, euclidian_dist)
-my_cosine_distances <- calculate_distances(my_test_input, time_series, cosine_sim)
+# Set the input date here:
+my_test_day <- "2014-07-26"
 
+# Calculating the distances
+my_euclidian_distances <- calculate_distances(time_series[[my_test_day]], time_series, euclidian_dist)
+my_cosine_distances <- calculate_distances(time_series[[my_test_day]], time_series, cosine_sim)
 
-sort_query_result(my_euclidian_distances)
+# Calculating the precisions
+cat("\nEuclidian distances -> ")
+p30_precision(my_test_day, sort_query_result(my_euclidian_distances))
+cat("\nCosine similarity -> ")
+p30_precision(my_test_day, sort_query_result(my_cosine_distances))
