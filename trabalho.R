@@ -80,8 +80,9 @@ sort_query_result <- function(query_to_sort, distance_function = EUCLIDEAN_FUNCT
 p30_precision <- function(input_date, ordered_distance_list) {
   same_month <- 0
   input_month <- substring(input_date, 1, 7)
-  
-  for(i in 1:30) {
+
+  # Delete the first element which is the day under query
+  for(i in 2:31) {
     month <- substring(ordered_distance_list[i], 1, 7)
     if(month == input_month) same_month <- same_month + 1
   }
@@ -176,16 +177,71 @@ if(DEBUG) file.remove("console_output.txt") # Delete previous console output if 
 if(DEBUG) cat("Console Output", file = "console_output.txt")
 if(DEBUG) cat("\n\n", file = "console_output.txt", append = TRUE)
 
+#
+# Set the input date here
+#
+test_day_01 <- "2014-03-21"
+test_day_02 <- "2014-11-15"
+test_day_03 <- "2015-04-21"
 
-# Set the input date here:
-my_test_day <- "2014-07-26"
-
+#
 # Calculating the distances
-my_euclidian_distances <- calculate_distances(time_series[[my_test_day]], time_series, euclidian_dist)
-my_cosine_distances <- calculate_distances(time_series[[my_test_day]], time_series, cosine_sim)
+#
+# Day 01
+euclidian_distances_01 <- calculate_distances(time_series[[test_day_01]], time_series, euclidian_dist)
+cosine_similarity_01 <- calculate_distances(time_series[[test_day_01]], time_series, cosine_sim)
+# Day 02
+euclidian_distances_02 <- calculate_distances(time_series[[test_day_02]], time_series, euclidian_dist)
+cosine_similarity_02 <- calculate_distances(time_series[[test_day_02]], time_series, cosine_sim)
+# Day 03
+euclidian_distances_03 <- calculate_distances(time_series[[test_day_03]], time_series, euclidian_dist)
+cosine_similarity_03 <- calculate_distances(time_series[[test_day_03]], time_series, cosine_sim)
 
+#
+# Sorting the result
+#
+# Query Day 01
+sort_euclidian_01 <- sort_query_result(euclidian_distances_01)
+sort_cosine_01 <- sort_query_result(cosine_similarity_01, distance_function = COSINE_FUNCTION)
+# Query Day 02
+sort_euclidian_02 <- sort_query_result(euclidian_distances_02)
+sort_cosine_02 <- sort_query_result(cosine_similarity_02, distance_function = COSINE_FUNCTION)
+# Query Day 03
+sort_euclidian_03 <- sort_query_result(euclidian_distances_03)
+sort_cosine_03 <- sort_query_result(cosine_similarity_03, distance_function = COSINE_FUNCTION)
+# Print results to a file
+cat("Console Output", file = "console_output_01.txt")
+cat("\n\n", file = "console_output_01.txt", append = TRUE)
+cat("Euclidean\n", file = "console_output_01.txt", append = TRUE)
+cat("Console Output", file = "console_output_02.txt")
+cat("\n\n", file = "console_output_02.txt", append = TRUE)
+cat("Euclidean\n", file = "console_output_02.txt", append = TRUE)
+cat("Console Output", file = "console_output_03.txt")
+cat("\n\n", file = "console_output_03.txt", append = TRUE)
+cat("Euclidean\n", file = "console_output_03.txt", append = TRUE)
+for(i in 1:31) {
+    cat(sort_euclidian_01[i], "\n",file = "console_output_01.txt", append = TRUE)
+    cat(sort_euclidian_02[i], "\n",file = "console_output_02.txt", append = TRUE)
+    cat(sort_euclidian_03[i], "\n",file = "console_output_03.txt", append = TRUE)
+}
+cat("\n\nCosine\n", file = "console_output_01.txt", append = TRUE)
+cat("\n\nCosine\n", file = "console_output_02.txt", append = TRUE)
+cat("\n\nCosine\n", file = "console_output_03.txt", append = TRUE)
+for(i in 1:31) {
+  cat(sort_cosine_01[i], "\n",file = "console_output_01.txt", append = TRUE)
+  cat(sort_cosine_02[i], "\n",file = "console_output_02.txt", append = TRUE)
+  cat(sort_cosine_03[i], "\n",file = "console_output_03.txt", append = TRUE)
+}
+
+#
 # Calculating the precisions
-cat("\nEuclidian distances -> ")
-p30_precision(my_test_day, sort_query_result(my_euclidian_distances))
-cat("\nCosine similarity -> ")
-p30_precision(my_test_day, sort_query_result(my_cosine_distances))
+#
+cat("\n\nDay 01 ->\n")
+p30_precision(test_day_01, sort_euclidian_01)
+p30_precision(test_day_01, sort_cosine_01)
+cat("\n\nDay 02 ->\n")
+p30_precision(test_day_02, sort_euclidian_02)
+p30_precision(test_day_02, sort_cosine_02)
+cat("\n\nDay 03 ->\n")
+p30_precision(test_day_03, sort_euclidian_03)
+p30_precision(test_day_03, sort_cosine_03)
