@@ -32,8 +32,9 @@ cosine_sim <- function(serie1, serie2) {
   return(similarity)
 }
 
-# Calculate the Euclidian dist between input serie and the whole dataset
-query_euclidian <- function(input_serie, set_of_series) {
+# Calculate the distances between a input serie and the whole dataset
+# taking a distance function as parameter
+calculate_distances <- function(input_serie, set_of_series, distance_function) {
     query_result <- list()
     set_series_size <- length(measured_dates)
 
@@ -46,7 +47,7 @@ query_euclidian <- function(input_serie, set_of_series) {
           next # skip this iteration
         }
         else {
-          similarity <- euclidian_dist(input_serie, current_serie)
+          similarity <- distance_function(input_serie, current_serie)
           if(DEBUG) cat("Day = ", current_day, file = "console_output.txt", append = TRUE)
           if(DEBUG) cat("\nSimilarity = ", similarity, "\n\n", file = "console_output.txt", append = TRUE)
           query_result[current_day] <- list(dist = similarity)
@@ -157,4 +158,5 @@ if(DEBUG) cat("\n\n", file = "console_output.txt", append = TRUE)
 
 # Test the code
 my_test_input <- time_series[[time_series[[20]]]]
-my_euclidian_result <- query_euclidian(my_test_input, time_series)
+my_euclidian_distances <- calculate_distances(my_test_input, time_series, euclidian_dist)
+my_cosine_distances <- calculate_distances(my_test_input, time_series, cosine_sim)
