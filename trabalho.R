@@ -9,6 +9,10 @@
 # DEFINING FUNCTIONS
 #
 
+# Constants
+EUCLIDEAN_FUNCTION <- "EUCLIDEAN"
+COSINE_FUNCTION <- "COSINE"
+
 # Debugging flag
 DEBUG <- FALSE
 
@@ -37,6 +41,7 @@ cosine_sim <- function(serie1, serie2) {
 calculate_distances <- function(input_serie, set_of_series, distance_function) {
     query_result <- list()
     set_series_size <- length(measured_dates)
+    idx <- 1
 
     for(i in 1:set_series_size) {
         if(DEBUG) cat("Serie ", i, "\n", file = "console_output.txt", append = TRUE)
@@ -50,11 +55,27 @@ calculate_distances <- function(input_serie, set_of_series, distance_function) {
           similarity <- distance_function(input_serie, current_serie)
           if(DEBUG) cat("Day = ", current_day, file = "console_output.txt", append = TRUE)
           if(DEBUG) cat("\nSimilarity = ", similarity, "\n\n", file = "console_output.txt", append = TRUE)
-          query_result[current_day] <- list(dist = similarity)
+          query_result[[idx]] <- list(day = current_day, dist = similarity)
+          idx <- idx + 1
         }
     }
 
     return(query_result)
+}
+
+sort_query_result <- function(query_to_sort, distance_function = EUCLIDEAN_FUNCTION) {
+  query_dates <- sapply(query_to_sort, "[[", "day")
+  query_similarity <- sapply(query_to_sort, "[[", "dist")
+
+  if(distance_function == EUCLIDEAN_FUNCTION) {
+    return(query_dates[order(query_similarity)])
+  }
+  else if(distance_function == COSINE_FUNCTION) {
+    return(query_dates[order(query_similarity, decreasing = TRUE)])
+  }
+  else {
+    return("UNKNOWN DISTANCE FUNCTION")
+  }
 }
 
 #TODO need to ordenate the distances list now to be able to calculate the precision
@@ -160,3 +181,6 @@ if(DEBUG) cat("\n\n", file = "console_output.txt", append = TRUE)
 my_test_input <- time_series[[time_series[[20]]]]
 my_euclidian_distances <- calculate_distances(my_test_input, time_series, euclidian_dist)
 my_cosine_distances <- calculate_distances(my_test_input, time_series, cosine_sim)
+
+
+sort_query_result(my_euclidian_distances)
