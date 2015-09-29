@@ -15,7 +15,7 @@ COSINE_FUNCTION <- "COSINE"
 DEBUG <- FALSE
 
 # Calculate the Euclidian distance between two series
-euclidian_dist <- function(serie1, serie2) {
+euclidean_dist <- function(serie1, serie2) {
   # Checking if the two series have the same size/dimesion
   if(length(serie1) != length(serie2)) return("ERROR")
 
@@ -183,32 +183,47 @@ if(DEBUG) cat("\n\n", file = "console_output.txt", append = TRUE)
 test_day_01 <- "2014-03-21"
 test_day_02 <- "2014-11-15"
 test_day_03 <- "2015-04-21"
+test_day_04 <- "2015-01-20"
+test_day_05 <- "2015-06-10"
 
 #
 # Calculating the distances
 #
 # Day 01
-euclidian_distances_01 <- calculate_distances(time_series[[test_day_01]], time_series, euclidian_dist)
+euclidean_distances_01 <- calculate_distances(time_series[[test_day_01]], time_series, euclidean_dist)
 cosine_similarity_01 <- calculate_distances(time_series[[test_day_01]], time_series, cosine_sim)
 # Day 02
-euclidian_distances_02 <- calculate_distances(time_series[[test_day_02]], time_series, euclidian_dist)
+euclidean_distances_02 <- calculate_distances(time_series[[test_day_02]], time_series, euclidean_dist)
 cosine_similarity_02 <- calculate_distances(time_series[[test_day_02]], time_series, cosine_sim)
 # Day 03
-euclidian_distances_03 <- calculate_distances(time_series[[test_day_03]], time_series, euclidian_dist)
+euclidean_distances_03 <- calculate_distances(time_series[[test_day_03]], time_series, euclidean_dist)
 cosine_similarity_03 <- calculate_distances(time_series[[test_day_03]], time_series, cosine_sim)
+# Day 04
+euclidean_distances_04 <- calculate_distances(time_series[[test_day_04]], time_series, euclidean_dist)
+cosine_similarity_04 <- calculate_distances(time_series[[test_day_04]], time_series, cosine_sim)
+# Day 05
+euclidean_distances_05 <- calculate_distances(time_series[[test_day_05]], time_series, euclidean_dist)
+cosine_similarity_05 <- calculate_distances(time_series[[test_day_05]], time_series, cosine_sim)
 
 #
 # Sorting the result
 #
 # Query Day 01
-sort_euclidian_01 <- sort_query_result(euclidian_distances_01)
+sort_euclidean_01 <- sort_query_result(euclidean_distances_01)
 sort_cosine_01 <- sort_query_result(cosine_similarity_01, distance_function = COSINE_FUNCTION)
 # Query Day 02
-sort_euclidian_02 <- sort_query_result(euclidian_distances_02)
+sort_euclidean_02 <- sort_query_result(euclidean_distances_02)
 sort_cosine_02 <- sort_query_result(cosine_similarity_02, distance_function = COSINE_FUNCTION)
 # Query Day 03
-sort_euclidian_03 <- sort_query_result(euclidian_distances_03)
+sort_euclidean_03 <- sort_query_result(euclidean_distances_03)
 sort_cosine_03 <- sort_query_result(cosine_similarity_03, distance_function = COSINE_FUNCTION)
+# Query Day 04
+sort_euclidean_04 <- sort_query_result(euclidean_distances_04)
+sort_cosine_04 <- sort_query_result(cosine_similarity_04, distance_function = COSINE_FUNCTION)
+# Query Day 05
+sort_euclidean_05 <- sort_query_result(euclidean_distances_05)
+sort_cosine_05 <- sort_query_result(cosine_similarity_05, distance_function = COSINE_FUNCTION)
+
 # Print results to a file
 cat("Console Output", file = "console_output_01.txt")
 cat("\n\n", file = "console_output_01.txt", append = TRUE)
@@ -219,29 +234,47 @@ cat("Euclidean\n", file = "console_output_02.txt", append = TRUE)
 cat("Console Output", file = "console_output_03.txt")
 cat("\n\n", file = "console_output_03.txt", append = TRUE)
 cat("Euclidean\n", file = "console_output_03.txt", append = TRUE)
+cat("Console Output", file = "console_output_04.txt")
+cat("\n\n", file = "console_output_04.txt", append = TRUE)
+cat("Euclidean\n", file = "console_output_04.txt", append = TRUE)
+cat("Console Output", file = "console_output_05.txt")
+cat("\n\n", file = "console_output_05.txt", append = TRUE)
+cat("Euclidean\n", file = "console_output_05.txt", append = TRUE)
 for(i in 1:31) {
-    cat(sort_euclidian_01[i], "\n",file = "console_output_01.txt", append = TRUE)
-    cat(sort_euclidian_02[i], "\n",file = "console_output_02.txt", append = TRUE)
-    cat(sort_euclidian_03[i], "\n",file = "console_output_03.txt", append = TRUE)
+    cat(sort_euclidean_01[i], "\n",file = "console_output_01.txt", append = TRUE)
+    cat(sort_euclidean_02[i], "\n",file = "console_output_02.txt", append = TRUE)
+    cat(sort_euclidean_03[i], "\n",file = "console_output_03.txt", append = TRUE)
+    cat(sort_euclidean_04[i], "\n",file = "console_output_04.txt", append = TRUE)
+    cat(sort_euclidean_05[i], "\n",file = "console_output_05.txt", append = TRUE)
 }
 cat("\n\nCosine\n", file = "console_output_01.txt", append = TRUE)
 cat("\n\nCosine\n", file = "console_output_02.txt", append = TRUE)
 cat("\n\nCosine\n", file = "console_output_03.txt", append = TRUE)
+cat("\n\nCosine\n", file = "console_output_04.txt", append = TRUE)
+cat("\n\nCosine\n", file = "console_output_05.txt", append = TRUE)
 for(i in 1:31) {
   cat(sort_cosine_01[i], "\n",file = "console_output_01.txt", append = TRUE)
   cat(sort_cosine_02[i], "\n",file = "console_output_02.txt", append = TRUE)
   cat(sort_cosine_03[i], "\n",file = "console_output_03.txt", append = TRUE)
+  cat(sort_cosine_04[i], "\n",file = "console_output_04.txt", append = TRUE)
+  cat(sort_cosine_05[i], "\n",file = "console_output_05.txt", append = TRUE)
 }
 
 #
 # Calculating the precisions
 #
 cat("\n\nDay 01 ->\n")
-p30_precision(test_day_01, sort_euclidian_01)
+p30_precision(test_day_01, sort_euclidean_01)
 p30_precision(test_day_01, sort_cosine_01)
 cat("\n\nDay 02 ->\n")
-p30_precision(test_day_02, sort_euclidian_02)
+p30_precision(test_day_02, sort_euclidean_02)
 p30_precision(test_day_02, sort_cosine_02)
 cat("\n\nDay 03 ->\n")
-p30_precision(test_day_03, sort_euclidian_03)
+p30_precision(test_day_03, sort_euclidean_03)
 p30_precision(test_day_03, sort_cosine_03)
+cat("\n\nDay 04 ->\n")
+p30_precision(test_day_04, sort_euclidean_04)
+p30_precision(test_day_04, sort_cosine_04)
+cat("\n\nDay 05 ->\n")
+p30_precision(test_day_05, sort_euclidean_05)
+p30_precision(test_day_05, sort_cosine_05)
