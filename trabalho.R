@@ -208,5 +208,29 @@ for(i in 1:length(measured_dates)) {
 
 
 
+#
+# CALCULATING THE OVERALL P@30 MEDIAN
+#
+elem_number <- 0
+summatory_cosine <- 0
+summatory_euclidian <- 0
+
+for(i in 1:length(measured_dates)) {
+  if(p30_precisions_euclidean[i] == -1) next
+  
+  summatory_euclidian <- summatory_euclidian + p30_precisions_euclidean[i]
+  summatory_cosine <- summatory_cosine + p30_precisions_cosine[i]
+  
+  elem_number <- elem_number + 1
+}
+
+cat("EUCLIDIAN OVERALL P@30 MEDIAN = ", (summatory_euclidian/elem_number), "\n")
+cat("COSINE OVERALL P@30 MEDIAN = ", (summatory_cosine/elem_number), "\n")
+
+
+
+
+
+
 
 
