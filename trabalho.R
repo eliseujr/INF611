@@ -41,6 +41,8 @@ calculate_distances <- function(input_serie, set_of_series, distance_function) {
     set_series_size <- length(measured_dates)
     idx <- 1
 
+    if(is.null(input_serie)) return(NULL)
+
     for(i in 1:set_series_size) {
         if(DEBUG) cat("Serie ", i, "\n", file = "console_output.txt", append = TRUE)
         current_serie <- set_of_series[[set_of_series[[i]]]]
@@ -62,6 +64,8 @@ calculate_distances <- function(input_serie, set_of_series, distance_function) {
 }
 
 sort_query_result <- function(query_to_sort, distance_function = EUCLIDEAN_FUNCTION) {
+  if(is.null(query_to_sort)) return(NULL)
+
   query_dates <- sapply(query_to_sort, "[[", "day")
   query_similarity <- sapply(query_to_sort, "[[", "dist")
 
@@ -78,6 +82,8 @@ sort_query_result <- function(query_to_sort, distance_function = EUCLIDEAN_FUNCT
 
 # Return P@30  precision
 p30_precision <- function(input_date, ordered_distance_list) {
+  if(is.null(ordered_distance_list)) return(-1)
+
   same_month <- 0
   input_month <- substring(input_date, 1, 7)
 
@@ -88,8 +94,8 @@ p30_precision <- function(input_date, ordered_distance_list) {
   }
   
   precision <- signif((same_month / 30)*100, 4)
-  
-  return(cat("P@30 precision for day", input_date,"is", precision, "%\n"))
+
+  return(precision)
 }
 
 #
@@ -153,9 +159,9 @@ for(i in 1:length(measured_dates)) {
         }
     }
 
-    # Delete the days where the number of measures are less than 130
+    # Delete the days where the number of measures are less than 130 or more then 144
     n_measures <- length(time_series[[time_series[[i]]]])
-    if(n_measures < 130) {
+    if(n_measures < 130 || n_measures > 144) {
         time_series[[time_series[[i]]]] <- NULL
     }
     # Complete the days that have missing measures
@@ -177,104 +183,30 @@ if(DEBUG) file.remove("console_output.txt") # Delete previous console output if 
 if(DEBUG) cat("Console Output", file = "console_output.txt")
 if(DEBUG) cat("\n\n", file = "console_output.txt", append = TRUE)
 
-#
-# Set the input date here
-#
-test_day_01 <- "2014-03-21"
-test_day_02 <- "2014-11-15"
-test_day_03 <- "2015-04-21"
-test_day_04 <- "2015-01-20"
-test_day_05 <- "2015-06-10"
+
 
 #
-# Calculating the distances
+# CALCULATING THE P@30 PRECISIONS FOR EUCLIDIAN AND COSINE FOR EACH DAY
 #
-# Day 01
-euclidean_distances_01 <- calculate_distances(time_series[[test_day_01]], time_series, euclidean_dist)
-cosine_similarity_01 <- calculate_distances(time_series[[test_day_01]], time_series, cosine_sim)
-# Day 02
-euclidean_distances_02 <- calculate_distances(time_series[[test_day_02]], time_series, euclidean_dist)
-cosine_similarity_02 <- calculate_distances(time_series[[test_day_02]], time_series, cosine_sim)
-# Day 03
-euclidean_distances_03 <- calculate_distances(time_series[[test_day_03]], time_series, euclidean_dist)
-cosine_similarity_03 <- calculate_distances(time_series[[test_day_03]], time_series, cosine_sim)
-# Day 04
-euclidean_distances_04 <- calculate_distances(time_series[[test_day_04]], time_series, euclidean_dist)
-cosine_similarity_04 <- calculate_distances(time_series[[test_day_04]], time_series, cosine_sim)
-# Day 05
-euclidean_distances_05 <- calculate_distances(time_series[[test_day_05]], time_series, euclidean_dist)
-cosine_similarity_05 <- calculate_distances(time_series[[test_day_05]], time_series, cosine_sim)
+p30_precisions_euclidean <- c()
+p30_precisions_cosine <- c()
+for(i in 1:length(measured_dates)) {
+  day_i <- time_series[[i]]
 
-#
-# Sorting the result
-#
-# Query Day 01
-sort_euclidean_01 <- sort_query_result(euclidean_distances_01)
-sort_cosine_01 <- sort_query_result(cosine_similarity_01, distance_function = COSINE_FUNCTION)
-# Query Day 02
-sort_euclidean_02 <- sort_query_result(euclidean_distances_02)
-sort_cosine_02 <- sort_query_result(cosine_similarity_02, distance_function = COSINE_FUNCTION)
-# Query Day 03
-sort_euclidean_03 <- sort_query_result(euclidean_distances_03)
-sort_cosine_03 <- sort_query_result(cosine_similarity_03, distance_function = COSINE_FUNCTION)
-# Query Day 04
-sort_euclidean_04 <- sort_query_result(euclidean_distances_04)
-sort_cosine_04 <- sort_query_result(cosine_similarity_04, distance_function = COSINE_FUNCTION)
-# Query Day 05
-sort_euclidean_05 <- sort_query_result(euclidean_distances_05)
-sort_cosine_05 <- sort_query_result(cosine_similarity_05, distance_function = COSINE_FUNCTION)
+  # Calculating the distances for day_i
+  euclidean_distances <- calculate_distances(time_series[[day_i]], time_series, euclidean_dist)
+  cosine_similarities <- calculate_distances(time_series[[day_i]], time_series, cosine_sim)
 
-# Print results to a file
-cat("Console Output", file = "console_output_01.txt")
-cat("\n\n", file = "console_output_01.txt", append = TRUE)
-cat("Euclidean\n", file = "console_output_01.txt", append = TRUE)
-cat("Console Output", file = "console_output_02.txt")
-cat("\n\n", file = "console_output_02.txt", append = TRUE)
-cat("Euclidean\n", file = "console_output_02.txt", append = TRUE)
-cat("Console Output", file = "console_output_03.txt")
-cat("\n\n", file = "console_output_03.txt", append = TRUE)
-cat("Euclidean\n", file = "console_output_03.txt", append = TRUE)
-cat("Console Output", file = "console_output_04.txt")
-cat("\n\n", file = "console_output_04.txt", append = TRUE)
-cat("Euclidean\n", file = "console_output_04.txt", append = TRUE)
-cat("Console Output", file = "console_output_05.txt")
-cat("\n\n", file = "console_output_05.txt", append = TRUE)
-cat("Euclidean\n", file = "console_output_05.txt", append = TRUE)
-for(i in 1:31) {
-    cat(sort_euclidean_01[i], "\n",file = "console_output_01.txt", append = TRUE)
-    cat(sort_euclidean_02[i], "\n",file = "console_output_02.txt", append = TRUE)
-    cat(sort_euclidean_03[i], "\n",file = "console_output_03.txt", append = TRUE)
-    cat(sort_euclidean_04[i], "\n",file = "console_output_04.txt", append = TRUE)
-    cat(sort_euclidean_05[i], "\n",file = "console_output_05.txt", append = TRUE)
-}
-cat("\n\nCosine\n", file = "console_output_01.txt", append = TRUE)
-cat("\n\nCosine\n", file = "console_output_02.txt", append = TRUE)
-cat("\n\nCosine\n", file = "console_output_03.txt", append = TRUE)
-cat("\n\nCosine\n", file = "console_output_04.txt", append = TRUE)
-cat("\n\nCosine\n", file = "console_output_05.txt", append = TRUE)
-for(i in 1:31) {
-  cat(sort_cosine_01[i], "\n",file = "console_output_01.txt", append = TRUE)
-  cat(sort_cosine_02[i], "\n",file = "console_output_02.txt", append = TRUE)
-  cat(sort_cosine_03[i], "\n",file = "console_output_03.txt", append = TRUE)
-  cat(sort_cosine_04[i], "\n",file = "console_output_04.txt", append = TRUE)
-  cat(sort_cosine_05[i], "\n",file = "console_output_05.txt", append = TRUE)
+  # Ranking to get the @30 best results
+  sort_euclidean <- sort_query_result(euclidean_distances)
+  sort_cosine    <- sort_query_result(cosine_similarities, distance_function = COSINE_FUNCTION)
+
+  # Calculating the P@30 for each day
+  p30_precisions_euclidean <- c(p30_precisions_euclidean, p30_precision(day_i, sort_euclidean))
+  p30_precisions_cosine    <- c(p30_precisions_cosine,    p30_precision(day_i, sort_cosine))
 }
 
-#
-# Calculating the precisions
-#
-cat("\n\nDay 01 ->\n")
-p30_precision(test_day_01, sort_euclidean_01)
-p30_precision(test_day_01, sort_cosine_01)
-cat("\n\nDay 02 ->\n")
-p30_precision(test_day_02, sort_euclidean_02)
-p30_precision(test_day_02, sort_cosine_02)
-cat("\n\nDay 03 ->\n")
-p30_precision(test_day_03, sort_euclidean_03)
-p30_precision(test_day_03, sort_cosine_03)
-cat("\n\nDay 04 ->\n")
-p30_precision(test_day_04, sort_euclidean_04)
-p30_precision(test_day_04, sort_cosine_04)
-cat("\n\nDay 05 ->\n")
-p30_precision(test_day_05, sort_euclidean_05)
-p30_precision(test_day_05, sort_cosine_05)
+
+
+
+
