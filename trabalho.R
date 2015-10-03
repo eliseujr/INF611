@@ -202,6 +202,8 @@ for(i in 1:length(measured_dates)) {
 
 p30_precisions_euclidean <- c()
 p30_precisions_cosine <- c()
+p30_per_month_euclidean <- list()
+p30_per_month_cosine <- list()
 for(i in 1:length(measured_dates)) {
   day_i <- time_series[[i]]
 
@@ -214,8 +216,39 @@ for(i in 1:length(measured_dates)) {
   sort_cosine    <- sort_query_result(cosine_similarities, distance_function = COSINE_FUNCTION)
 
   # Calculating the P@30 for each day
-  p30_precisions_euclidean <- c(p30_precisions_euclidean, p30_precision(day_i, sort_euclidean))
-  p30_precisions_cosine    <- c(p30_precisions_cosine,    p30_precision(day_i, sort_cosine))
+  daily_p30_euclidean <- p30_precision(day_i, sort_euclidean)
+  daily_p30_cosine <- p30_precision(day_i, sort_cosine)
+  p30_precisions_euclidean <- c(p30_precisions_euclidean, daily_p30_euclidean)
+  p30_precisions_cosine    <- c(p30_precisions_cosine,    daily_p30_cosine)
+  
+  # Monthly amount for each distance function
+  # Euclidean
+  if(is.null(p30_per_month_euclidean[[substring(day_i, 1, 7)]])) {
+      p30_per_month_euclidean[substring(day_i, 1, 7)] <- daily_p30_euclidean
+  }
+  else {
+      p30_per_month_euclidean[substring(day_i, 1, 7)] <- 
+              p30_per_month_euclidean[[substring(day_i, 1, 7)]] + daily_p30_euclidean
+  }
+  # Cosine
+  if(is.null(p30_per_month_cosine[[substring(day_i, 1, 7)]])) {
+    p30_per_month_cosine[substring(day_i, 1, 7)] <- daily_p30_cosine
+  }
+  else {
+    p30_per_month_cosine[substring(day_i, 1, 7)] <- 
+      p30_per_month_cosine[[substring(day_i, 1, 7)]] + daily_p30_cosine
+  }
+}
+
+# Plot the graphs
+graph_euclidean <- c()
+graph_cosine <- c()
+for(i in 1:length(p30_per_month_cosine)) {
+    euclidean_month_avg <- p30_per_month_euclidean[[i]] / days_per_month[[i]]
+    graph_euclidean <- c(graph_euclidean, euclidean_month_avg)
+    
+    cosine_month_avg <- p30_per_month_cosine[[i]] / days_per_month[[i]]
+    graph_cosine <- c(graph_cosine, cosine_month_avg)
 }
 
 
