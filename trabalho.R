@@ -184,10 +184,22 @@ if(DEBUG) cat("Console Output", file = "console_output.txt")
 if(DEBUG) cat("\n\n", file = "console_output.txt", append = TRUE)
 
 
-
 #
 # CALCULATING THE P@30 PRECISIONS FOR EUCLIDIAN AND COSINE FOR EACH DAY
 #
+
+# Get how many days per month
+days_per_month <- list()
+for(i in 1:length(measured_dates)) {
+  current_month <- substring(measured_dates[[i]], 1, 7)
+  if(is.null(days_per_month[[current_month]])) {
+    days_per_month[current_month] <- 1
+  }
+  else {
+    days_per_month[current_month] <- days_per_month[[current_month]] + 1
+  }
+}
+
 p30_precisions_euclidean <- c()
 p30_precisions_cosine <- c()
 for(i in 1:length(measured_dates)) {
@@ -205,7 +217,6 @@ for(i in 1:length(measured_dates)) {
   p30_precisions_euclidean <- c(p30_precisions_euclidean, p30_precision(day_i, sort_euclidean))
   p30_precisions_cosine    <- c(p30_precisions_cosine,    p30_precision(day_i, sort_cosine))
 }
-
 
 
 #
@@ -226,11 +237,4 @@ for(i in 1:length(measured_dates)) {
 
 cat("EUCLIDIAN OVERALL P@30 MEDIAN = ", (summatory_euclidian/elem_number), "\n")
 cat("COSINE OVERALL P@30 MEDIAN = ", (summatory_cosine/elem_number), "\n")
-
-
-
-
-
-
-
 
