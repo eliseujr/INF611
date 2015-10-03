@@ -260,8 +260,8 @@ for(i in 1:length(p30_per_month_cosine)) {
 
 # Plotting the graph
 g_range <- c(0, 26)
-plot(graph_euclidean, type="o", col="blue", ylim=g_range, axes=FALSE, ann=FALSE) ; box()
-lines(graph_cosine, type="o", col="red", pch=22)
+plot(head(graph_euclidean, -1), type="o", col="blue", ylim=g_range, axes=FALSE, ann=FALSE) ; box()
+lines(head(graph_cosine, -1), type="o", col="red", pch=22)
 axis(1, at=1:20, lab=labels(days_per_month), las=2)
 axis(2, las=1, at=2*0:g_range[2])
 title(main="Montly P@30 mean", col.main="blue", font.main=4)
