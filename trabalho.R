@@ -98,6 +98,8 @@ p30_precision <- function(input_date, ordered_distance_list) {
   return(precision)
 }
 
+
+
 #
 # MAIN EXECUTION STARTS HERE
 #
@@ -184,6 +186,7 @@ if(DEBUG) cat("Console Output", file = "console_output.txt")
 if(DEBUG) cat("\n\n", file = "console_output.txt", append = TRUE)
 
 
+
 #
 # CALCULATING THE P@30 PRECISIONS FOR EUCLIDIAN AND COSINE FOR EACH DAY
 #
@@ -240,7 +243,11 @@ for(i in 1:length(measured_dates)) {
   }
 }
 
-# Plot the graphs
+
+
+#
+# CALCULATING THE MONTHLY P@30 MEDIAN
+#
 graph_euclidean <- c()
 graph_cosine <- c()
 for(i in 1:length(p30_per_month_cosine)) {
@@ -250,6 +257,18 @@ for(i in 1:length(p30_per_month_cosine)) {
     cosine_month_avg <- p30_per_month_cosine[[i]] / days_per_month[[i]]
     graph_cosine <- c(graph_cosine, cosine_month_avg)
 }
+
+# Plotting the graph
+g_range <- c(0, 26)
+plot(graph_euclidean, type="o", col="blue", ylim=g_range, axes=FALSE, ann=FALSE) ; box()
+lines(graph_cosine, type="o", col="red", pch=22)
+axis(1, at=1:20, lab=labels(days_per_month), las=2)
+axis(2, las=1, at=2*0:g_range[2])
+title(main="Montly P@30 mean", col.main="blue", font.main=4)
+#title(xlab="Month", col.lab=rgb(0,0.5,0))
+title(ylab="P@30 mean", col.lab=rgb(0,0.5,0))
+legend(1, g_range[2], c("Euclidian","Cosine"), cex=0.8, col=c("blue","red"), pch=21:22, lty=1:1)
+
 
 
 #
